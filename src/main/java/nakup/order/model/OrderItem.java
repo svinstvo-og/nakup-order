@@ -3,6 +3,7 @@ package nakup.order.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "order_item")
 public class OrderItem {
 
     @Id
