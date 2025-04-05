@@ -59,4 +59,9 @@ public class OrderController {
         Order order = orderService.validate(request.getOrderId());
         orderService.cancelOrder(order);
     }
+
+    @GetMapping
+    public OrderResponce getOrderById(@RequestBody OrderCancelRequest request) {
+        return new OrderResponce(orderService.validate(request.getOrderId()));
+    }
 }
