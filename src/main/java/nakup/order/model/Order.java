@@ -1,12 +1,18 @@
 package nakup.order.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "order")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@Table(name = "orders")
 public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -24,6 +30,6 @@ public class Order {
 
     Long paymentId;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany //mappedBy = "order"
     List<OrderItem> items;
 }
