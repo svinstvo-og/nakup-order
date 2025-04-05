@@ -2,6 +2,7 @@ package nakup.order.service;
 
 import jakarta.transaction.Transactional;
 import nakup.order.dto.CartItemRequest;
+import nakup.order.dto.UpdatePaymentRequest;
 import nakup.order.model.Order;
 import nakup.order.model.OrderItem;
 import nakup.order.repository.OrderItemRepository;
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -22,6 +24,14 @@ public class OrderService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+    public Order validate(Long orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if (order.isEmpty()) {
+            throw new RuntimeException("Order not found");
+        }
+        return order.get();
+    }
 
     @Transactional
     public Order buildOrder(List<CartItemRequest> requests) {
@@ -56,6 +66,22 @@ public class OrderService {
         orderRepository.save(order);
 
         return order;
+    }
+
+    @Transactional
+    public void updatePayment(Order order, UpdatePaymentRequest request) {
+
+        order.setPaymentId(request.getPaymentId());
+        if (request.getSuccess()) {
+            order.setStatus("PENDING SHIPPING DETAILS");
+            order.setPaidAt(LocalDateTime.now());
+            System.out.println("pending shipping details");
+        }
+        else {
+            order.setStatus("PAYMENT_FAILED");
+            System.out.println("payment failed");
+            //order.setCancelledAt(LocalDateTime.now());
+        }
     }
 
 }
