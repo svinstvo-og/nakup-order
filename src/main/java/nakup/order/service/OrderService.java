@@ -2,6 +2,7 @@ package nakup.order.service;
 
 import jakarta.transaction.Transactional;
 import nakup.order.dto.CartItemRequest;
+import nakup.order.dto.ReserveItemsResponse;
 import nakup.order.dto.UpdatePaymentRequest;
 import nakup.order.model.Order;
 import nakup.order.model.OrderItem;
@@ -84,4 +85,22 @@ public class OrderService {
         }
     }
 
+    public List<ReserveItemsResponse> reserveItems(Order order) {
+        List<ReserveItemsResponse> reserveItems = new ArrayList<>();
+        List<OrderItem> orderItems = order.getItems();
+
+        for (OrderItem orderItem : orderItems) {
+            ReserveItemsResponse reserve = new ReserveItemsResponse(orderItem);
+            reserve.setUserId(order.getUserId());
+            reserveItems.add(reserve);
+        }
+
+        return reserveItems;
+    }
+
+    @Transactional
+    public void cancelOrder(Order order) {
+        order.setStatus("CANCELLED");
+        order.setCancelledAt(LocalDateTime.now());
+    }
 }
