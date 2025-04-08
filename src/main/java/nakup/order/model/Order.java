@@ -16,20 +16,20 @@ import java.util.List;
 public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    Long id;
+    private Long id;
 
-    Long userId;
+    private Long userId;
 
-    LocalDateTime placedAt;
-    LocalDateTime deliveredAt;
-    LocalDateTime paidAt;
-    LocalDateTime cancelledAt;
+    private LocalDateTime placedAt;
+    private LocalDateTime deliveredAt;
+    private LocalDateTime paidAt;
+    private LocalDateTime cancelledAt;
 
-    String status;
-    Double totalPrice;
+    private String status;
+    private Double totalPrice;
 
-    Long paymentId;
+    private Long paymentId;
 
     @OneToMany //mappedBy = "order"
-    List<OrderItem> items;
+    private List<OrderItem> items;
 }
