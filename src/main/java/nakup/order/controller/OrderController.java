@@ -21,7 +21,7 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
 
-    @PostMapping
+    @PostMapping("/")
     public List<ReserveItemsResponse> postOrder(@RequestBody List<CartItemRequest> requests) {
         Order order = orderService.buildOrder(requests);
         return orderService.reserveItems(order);
@@ -60,7 +60,7 @@ public class OrderController {
         orderService.cancelOrder(order);
     }
 
-    @GetMapping
+    @GetMapping("/")
     public OrderResponce getOrderById(@RequestBody OrderCancelRequest request) {
         return new OrderResponce(orderService.validate(request.getOrderId()));
     }

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: order
+    name: order-service
 
   datasource:
     url: jdbc:postgresql://localhost:5432/nakup-order
@@ -11,6 +11,25 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:29092
+      group-id: nakup-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+#            value:
+#              default:
+#                type: nakup.order.model.event.OrderFormedRequest
+            use:
+              type:
+                headers: false
+            trusted:
+              packages: "*"
+            use-type-headers: false
 
 server:
   port: 8097
