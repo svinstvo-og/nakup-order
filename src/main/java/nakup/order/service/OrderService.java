@@ -6,15 +6,18 @@ import nakup.order.dto.ReserveItemsResponse;
 import nakup.order.dto.UpdatePaymentRequest;
 import nakup.order.model.Order;
 import nakup.order.model.OrderItem;
+import nakup.order.model.event.OrderCreatedEvent;
 import nakup.order.model.event.OrderFormedEvent;
 import nakup.order.repository.OrderItemRepository;
 import nakup.order.repository.OrderRepository;
+import nakup.order.service.event.OrderEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,9 @@ public class OrderService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private OrderEventPublisher orderEventPublisher;
 
     public Order validate(Long orderId) {
         Optional<Order> order = orderRepository.findById(orderId);
@@ -97,8 +103,18 @@ public class OrderService {
         order.setUserId(event.userId());
 
         orderRepository.save(order);
-
+        createCreatedEvent(order);
         return order;
+    }
+
+    public void createCreatedEvent(Order order) {
+        HashMap<Long, Integer> items = new HashMap<>();
+
+        for (OrderItem item: order.getItems()) {
+            items.put(item.getProductId(), item.getQuantity().intValue());
+        }
+
+        orderEventPublisher.publishOrderCreatedEvent(new OrderCreatedEvent(order.getUserId(), order.getId(), order.getPlacedAt(), items));
     }
 
     @Transactional
