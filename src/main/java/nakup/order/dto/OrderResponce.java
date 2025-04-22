@@ -8,6 +8,7 @@ import lombok.*;
 import nakup.order.model.Order;
 import nakup.order.model.OrderItem;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +23,10 @@ public class OrderResponce {
 
     Long userId;
 
-    LocalDateTime placedAt;
-    LocalDateTime deliveredAt;
-    LocalDateTime paidAt;
-    LocalDateTime cancelledAt;
+    Timestamp placedAt;
+    Timestamp deliveredAt;
+    Timestamp paidAt;
+    Timestamp cancelledAt;
 
     String status;
     Double totalPrice;

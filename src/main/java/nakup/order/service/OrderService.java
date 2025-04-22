@@ -6,6 +6,7 @@ import nakup.order.dto.ReserveItemsResponse;
 import nakup.order.dto.UpdatePaymentRequest;
 import nakup.order.model.Order;
 import nakup.order.model.OrderItem;
+import nakup.order.model.event.OrderFormedEvent;
 import nakup.order.repository.OrderItemRepository;
 import nakup.order.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +61,40 @@ public class OrderService {
 
         order.setItems(orderItems);
         order.setStatus("PENDING");
-        order.setPlacedAt(LocalDateTime.now());
+        order.setPlacedAt(Timestamp.valueOf(LocalDateTime.now()));
         order.setUserId(requests.get(0).getUserId());
         order.setTotalPrice(totalPrice);
+
+        orderRepository.save(order);
+
+        return order;
+    }
+
+    @Transactional
+    public Order buildOrderFromEvent(OrderFormedEvent event) {
+        Order order = new Order();
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        if (event.items().isEmpty()) {
+            throw new RuntimeException("Order items is null or empty");
+        }
+
+        OrderItem orderItem;
+        for (Long productId: event.items().keySet()) {
+            orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProductId(productId);
+            orderItem.setQuantity(event.items().get(productId).longValue());
+            orderItem.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            orderItems.add(orderItem);
+
+            orderItemRepository.save(orderItem);
+        }
+
+        order.setItems(orderItems);
+        order.setStatus("PENDING");
+        order.setPlacedAt(Timestamp.valueOf(LocalDateTime.now()));
+        order.setUserId(event.userId());
 
         orderRepository.save(order);
 
@@ -75,7 +107,7 @@ public class OrderService {
         order.setPaymentId(request.getPaymentId());
         if (request.getSuccess()) {
             order.setStatus("PENDING SHIPPING DETAILS");
-            order.setPaidAt(LocalDateTime.now());
+            order.setPaidAt(Timestamp.valueOf(LocalDateTime.now()));
             System.out.println("pending shipping details");
         }
         else {
@@ -101,6 +133,6 @@ public class OrderService {
     @Transactional
     public void cancelOrder(Order order) {
         order.setStatus("CANCELLED");
-        order.setCancelledAt(LocalDateTime.now());
+        order.setCancelledAt(Timestamp.valueOf(LocalDateTime.now()));
     }
 }

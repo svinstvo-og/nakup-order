@@ -3,6 +3,7 @@ package nakup.order.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,10 +21,10 @@ public class Order {
 
     private Long userId;
 
-    private LocalDateTime placedAt;
-    private LocalDateTime deliveredAt;
-    private LocalDateTime paidAt;
-    private LocalDateTime cancelledAt;
+    private Timestamp placedAt;
+    private Timestamp deliveredAt;
+    private Timestamp paidAt;
+    private Timestamp cancelledAt;
 
     private String status;
     private Double totalPrice;
