@@ -3,6 +3,7 @@ package nakup.order.model.event;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 
 public record OrderFormedEvent(
@@ -10,6 +11,6 @@ public record OrderFormedEvent(
         Long userId,
         @JsonProperty("created-at")
         Timestamp createdAt,
-        @JsonProperty("order-items")
-        List<OrderItem> orderItems
+        @JsonProperty("items")
+        HashMap<Long, Integer> items
 ) { }
