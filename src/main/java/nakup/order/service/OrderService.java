@@ -151,4 +151,26 @@ public class OrderService {
         order.setStatus("CANCELLED");
         order.setCancelledAt(Timestamp.valueOf(LocalDateTime.now()));
     }
+
+    @Transactional
+    public void updatePrice(Long orderId, HashMap<Long, Double> prices) {
+        Order order = validate(orderId);
+        double totalPrice = 0.0;
+        List<OrderItem> items = order.getItems();
+
+        for (OrderItem item: items) {
+            //System.out.println(item.getProductId() + ": " + prices.get(item.getProductId()));
+            if (prices.get(item.getProductId()) == null) {
+                throw new RuntimeException("unit price for product: " + item.getProductId() + " is null");
+            }
+            item.setUnitPrice(prices.get(item.getProductId()));
+            item.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            totalPrice += item.getUnitPrice() * item.getQuantity();
+        }
+        order.setItems(items);
+        order.setTotalPrice(totalPrice);
+
+        System.out.println("Total price: " + totalPrice);
+
+    }
 }
