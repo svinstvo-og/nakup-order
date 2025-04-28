@@ -21,9 +21,6 @@ spring:
       properties:
         spring:
           json:
-#            value:
-#              default:
-#                type: nakup.order.model.event.OrderFormedRequest
             use:
               type:
                 headers: false

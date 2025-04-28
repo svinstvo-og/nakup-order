@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class OrderService {
@@ -167,10 +164,36 @@ public class OrderService {
             item.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             totalPrice += item.getUnitPrice() * item.getQuantity();
         }
+
         order.setItems(items);
         order.setTotalPrice(totalPrice);
 
         System.out.println("Total price: " + totalPrice);
 
+        if (Objects.equals(order.getStatus(), "PENDING")) {
+            order.setStatus("PENDING RESERVATION");
+        }
+        if (Objects.equals(order.getStatus(), "PENDING TOTAL EVALUATION")) {
+            order.setStatus("PENDING PAYMENT INITIATION");
+            //TODO payment
+        }
+    }
+
+    @Transactional
+    public void updateReservation(Long orderId, boolean success) {
+        Order order = validate(orderId);
+
+        if (success) {
+            if (order.getTotalPrice() == null) {
+                order.setStatus("PENDING TOTAL EVALUATION");
+            }
+            else {
+                order.setStatus("PENDING PAYMENT INITIATION");
+                //TODO payment proceed
+            }
+        }
+        else {
+            throw new RuntimeException("Reservation failed");
+        }
     }
 }
