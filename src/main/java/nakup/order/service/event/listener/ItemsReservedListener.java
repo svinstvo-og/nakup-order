@@ -1,7 +1,6 @@
-package nakup.order.service.event;
+package nakup.order.service.event.listener;
 
 import nakup.order.model.event.ItemsReservedEvent;
-import nakup.order.model.event.OrderFormedEvent;
 import nakup.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;

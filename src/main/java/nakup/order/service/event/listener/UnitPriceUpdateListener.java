@@ -1,4 +1,4 @@
-package nakup.order.service.event;
+package nakup.order.service.event.listener;
 
 import nakup.order.model.event.UnitPriceUpdatedEvent;
 import nakup.order.service.OrderService;

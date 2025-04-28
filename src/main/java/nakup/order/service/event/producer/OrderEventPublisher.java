@@ -1,4 +1,4 @@
-package nakup.order.service.event;
+package nakup.order.service.event.producer;
 
 import nakup.order.model.event.OrderCreatedEvent;
 import org.springframework.kafka.core.KafkaTemplate;

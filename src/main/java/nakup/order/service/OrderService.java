@@ -8,9 +8,11 @@ import nakup.order.model.Order;
 import nakup.order.model.OrderItem;
 import nakup.order.model.event.OrderCreatedEvent;
 import nakup.order.model.event.OrderFormedEvent;
+import nakup.order.model.event.PaymentInitiatedEvent;
 import nakup.order.repository.OrderItemRepository;
 import nakup.order.repository.OrderRepository;
-import nakup.order.service.event.OrderEventPublisher;
+import nakup.order.service.event.producer.OrderEventPublisher;
+import nakup.order.service.event.producer.PaymentInitiatedProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,9 @@ public class OrderService {
 
     @Autowired
     private OrderEventPublisher orderEventPublisher;
+
+    @Autowired
+    private PaymentInitiatedProducer paymentInitiatedProducer;
 
     public Order validate(Long orderId) {
         Optional<Order> order = orderRepository.findById(orderId);
@@ -175,7 +180,12 @@ public class OrderService {
         }
         if (Objects.equals(order.getStatus(), "PENDING TOTAL EVALUATION")) {
             order.setStatus("PENDING PAYMENT INITIATION");
-            //TODO payment
+
+            paymentInitiatedProducer.publishPaymentInitializedEvent(new PaymentInitiatedEvent(
+                    orderId,
+                    order.getUserId(),
+                    totalPrice
+            ));
         }
     }
 
@@ -189,7 +199,12 @@ public class OrderService {
             }
             else {
                 order.setStatus("PENDING PAYMENT INITIATION");
-                //TODO payment proceed
+
+                paymentInitiatedProducer.publishPaymentInitializedEvent(new PaymentInitiatedEvent(
+                        orderId,
+                        order.getUserId(),
+                        order.getTotalPrice()
+                ));
             }
         }
         else {
